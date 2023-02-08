@@ -1,10 +1,8 @@
 Welcome to the missing AX documentation
-===================================
+=======================================
 
 **X++** is the programming language that powers Dynamics 365 
 
-Check out the :doc:`usage` section for further information, including
-how to :ref:`installation` the project.
 
 .. note::
 
