@@ -1,22 +1,21 @@
-Welcome to Lumache's documentation!
+Welcome to the missing AX documentation
 ===================================
 
-**Lumache** (/lu'make/) is a Python library for cooks and food lovers
-that creates recipes mixing random ingredients.
-It pulls data from the `Open Food Facts database <https://world.openfoodfacts.org/>`_
-and offers a *simple* and *intuitive* API.
+**X++** is the programming language that powers Dynamics 365 
 
 Check out the :doc:`usage` section for further information, including
 how to :ref:`installation` the project.
 
 .. note::
 
-   This project is under active development.
+   This documentation site is under intial construction and 
+   may not be complete. Please consider using the official 
+   MSFT documentations for all authoritative information.
 
 Contents
 --------
 
 .. toctree::
 
-   usage
-   api
+   types
+   tables
