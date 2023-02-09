@@ -38,7 +38,7 @@ boolean
 +++++++
 Booleans are simple binary structures, which can be either true or false. Booleans are represented as integers and due to this, you can also assign integer values to them.
 
-.. code-block:: X++
+.. codeblock:: X++
     boolean isTrue; // false
     isTrue = true; // true
     boolean isFalse = false; // false
