@@ -41,12 +41,12 @@ In this example from the AtlPersonnel module, the primary key value that is bein
 
 Helpful conversion functions:
 
-* `any2date <any2date_>`_
-* `any2enum <any2enum_>`_
-* `any2int <any2int_>`_
-* `any2int64 <any2int64_>`_
-* `any2real <any2real_>`_
-* `any2str <any2str_>`_
+* :ref:`any2date <any2date>`
+* :ref:`any2enum <any2enum>`
+* :ref:`any2int <any2int>`
+* :ref:`any2int64 <any2int64>`
+* :ref:`any2real <any2real>`
+* :ref:`any2str <any2str>`
 
 boolean
 +++++++
