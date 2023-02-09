@@ -8,9 +8,24 @@ Primatives
 
 To use Lumache, first install it using pip:
 
-.. code-block:: console
+.. code-block:: xpp
 
-   (.venv) $ pip install lumache
+   [Form]
+   public class HRMCourseTable extends FormRun
+   {
+      NumberSeqFormHandler numberSeqFormHandler;
+      str pageTitleString;
+      public void close()
+      {
+         if (numberSeqFormHandler)
+         {
+               numberSeqFormHandler.formMethodClose();
+         }
+
+         super();
+
+      }
+   }
 
 .. Creating recipes
 .. ----------------

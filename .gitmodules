@@ -1,0 +1,4 @@
+[submodule "pygments"]
+	path = pygments
+	url = https://github.com/andrewschmidt-a/pygments
+	branch = add-xpp-support
