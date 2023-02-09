@@ -15,5 +15,7 @@ Contents
 
 .. toctree::
 
+   getting-started
    types
    tables
+   globalfunctions
