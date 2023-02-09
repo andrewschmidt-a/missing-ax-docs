@@ -31,3 +31,8 @@ python:
     - method: pip
       path: another/package
    system_packages: true
+
+submodules:
+  include:
+    - pygments
+  recursive: true
