@@ -28,8 +28,6 @@ python:
    install:
     - method: setuptools
       path: ./pygments/
-    - method: pip
-      path: another/package
    system_packages: true
 
 submodules:
