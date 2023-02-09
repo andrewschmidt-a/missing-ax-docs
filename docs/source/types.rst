@@ -11,7 +11,7 @@ anytype
 
 Anytypes are used as placeholders for any type of data. When it is assigned a value it then is converted to that type.
 
-.. codeblock:: X++
+.. code-block:: X++
    :caption: Example of automatic type assignment
     anytype placeholder;
     placeholder = "this is a str"; // Automatically assigns a str literal.
@@ -22,8 +22,9 @@ Anytypes are used as placeholders for any type of data. When it is assigned a va
 
 In this example from the AtlPersonnel module, the primary key value that is being returned is not known so anytype must be used as a placeholder.
 
-.. codeblock:: X++
+.. code-block:: X++
    :caption: Example of using anytype as a placeholder
+
    [SysGeneratedCode('ATLGenerator', '1.0.0.0')]
 	protected final Common getRecordByPrimaryKey(anytype _primarykeyValue)
     {
@@ -38,7 +39,8 @@ boolean
 +++++++
 Booleans are simple binary structures, which can be either true or false. Booleans are represented as integers and due to this, you can also assign integer values to them.
 
-.. codeblock:: X++
+.. code-block:: X++
+
     boolean isTrue; // false
     isTrue = true; // true
     boolean isFalse = false; // false
