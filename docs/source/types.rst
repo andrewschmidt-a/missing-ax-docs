@@ -8,7 +8,7 @@ Primatives
 
 To use Lumache, first install it using pip:
 
-.. code-block:: xpp
+.. code-block:: Xpp
 
    [Form]
    public class HRMCourseTable extends FormRun
@@ -20,6 +20,8 @@ To use Lumache, first install it using pip:
          if (numberSeqFormHandler)
          {
                numberSeqFormHandler.formMethodClose();
+               int test = 0;
+               test++;
          }
 
          super();
