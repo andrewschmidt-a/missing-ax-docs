@@ -13,6 +13,7 @@ Anytypes are used as placeholders for any type of data. When it is assigned a va
 
 .. code-block:: X++
    :caption: Example of automatic type assignment
+
     anytype placeholder;
     placeholder = "this is a str"; // Automatically assigns a str literal.
     placeholder = 0; // Runtime Error! -- this is not allowed since it is now assigned to a str
