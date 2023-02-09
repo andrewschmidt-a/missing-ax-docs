@@ -79,8 +79,7 @@ Real literals are numbers that can hold decimals. In other languages this may be
 
 .. code-block:: X++
 
-    int myInt = 1334;
-    int64 myLargeInt = 19299990878787999;
+    real myReal = 1e4; // 1000
 
 .. note ::
    If you are using the CLRInterop layer for your code, you will want to make sure to use .NET Decimal type between C# and X++ code as that is what X++ uses.
