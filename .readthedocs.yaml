@@ -28,7 +28,7 @@ python:
    install:
     - method: setuptools
       path: ./pygments/
-   system_packages: true
+   #system_packages: true
 
 submodules:
   include:
