@@ -6,7 +6,7 @@ Welcome to the missing AX documentation
 
 .. note::
 
-   This documentation site is under intial construction and 
+   This documentation site is under initial construction and 
    may not be complete. Please consider using the official 
    MSFT documentations for all authoritative information.
 
