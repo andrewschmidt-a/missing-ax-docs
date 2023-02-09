@@ -1,0 +1,431 @@
+[Form]
+public class HRMCourseTable extends FormRun
+{
+    NumberSeqFormHandler numberSeqFormHandler;
+    str pageTitleString;
+    public void close()
+    {
+        if (numberSeqFormHandler)
+        {
+            numberSeqFormHandler.formMethodClose();
+        }
+
+        super();
+
+    }
+
+    public void init()
+    {
+        if (HcmFeatureStateProvider::isFeatureEnabled(CourseEnhancementsFeature::instance()))
+        {
+            Args redirectArgs = element.args();
+            MenuFunction menuFunction = new MenuFunction(menuItemDisplayStr(HRMCourseListPageV2), MenuItemType::Display);
+            menuFunction.run(redirectArgs);
+
+            this.lifecycleHelper().exitForm();
+        }
+
+        super();
+
+        this.setEvaluation();
+
+        // Determine if the button to access the questionnaire scheduling from a form should be enabled.
+        questionnaireScheduling.enabled(KMEnableScheduleQuestionnaireButton::enableScheduleQuestionnaireButton(element));
+        questionnaireScheduling.visible(questionnaireScheduling.enabled());
+    }
+
+    NumberSeqFormHandler numberSeqFormHandler()
+    {
+        if (!numberSeqFormHandler)
+        {
+            numberSeqFormHandler = NumberSeqFormHandler::newForm(HRMParameters::numRefCourseId().NumberSequenceId,
+                                                                 element,
+                                                                 hrmCourseTable_ds,
+                                                                 fieldNum(HRMCourseTable, HrmCourseId)
+                                                                );
+        }
+        return numberSeqFormHandler;
+    }
+
+    void setButtons()
+    {
+        if (hrmCourseTable.Setup == HRMCourseSetup::Standard)
+        {
+            hrmCourseAgenda.enabled(false);
+            hrmCourseSessionTrack.enabled(false);
+            hrmCourseSession.enabled(false);
+        }
+        else if (hrmCourseTable.Setup == HRMCourseSetup::Agenda)
+        {
+            hrmCourseAgenda.enabled(true);
+            hrmCourseSessionTrack.enabled(false);
+            hrmCourseSession.enabled(false);
+        }
+        else if (hrmCourseTable.Setup == HRMCourseSetup::AgendaSession)
+        {
+            hrmCourseAgenda.enabled(true);
+            hrmCourseSessionTrack.enabled(true);
+            hrmCourseSession.enabled(true);
+        }
+
+        switch (hrmCourseTable.Status)
+        {
+            case HRMCourseTableStatus::Created :
+                hrmCourseConfirmation.enabled(false);
+                hrmCourseTableOpen.enabled(true);
+                hrmCourseTableClose.enabled(false);
+                hrmCourseTableCancel.enabled(false);
+                hrmCourseTableReopen.enabled(false);
+                break;
+
+            case HRMCourseTableStatus::Open :
+                hrmCourseConfirmation.enabled(true);
+                hrmCourseTableOpen.enabled(false);
+                hrmCourseTableClose.enabled(true);
+                hrmCourseTableCancel.enabled(true);
+                hrmCourseTableReopen.enabled(false);
+                break;
+
+            case HRMCourseTableStatus::Closed, HRMCourseTableStatus::Cancelled :
+                hrmCourseConfirmation.enabled(false);
+                hrmCourseTableOpen.enabled(false);
+                hrmCourseTableClose.enabled(false);
+                hrmCourseTableCancel.enabled(false);
+                hrmCourseTableReopen.enabled(true);
+                break;
+        }
+    }
+
+    void setEvaluation()
+    {
+        if (!KMConnectionType::findTableId(tableNum(HRMCourseTable)).EnableKnowledgeCollector)
+        {
+            generalGroup_kmKnowledgeCollectorPlanningTableId.allowEdit(false);
+        }
+    }
+
+    private void updateCourseNotes()
+    {
+        if (HcmCourseType::find(HRMCourseTable.CourseType))
+        {
+            HcmCourseTypeNotes courseTypeNotes = HcmCourseTypeNotes::findByCourseTypeNotesType(HRMCourseTable.CourseType, HRMCourseNotesType::Notes);
+            HcmCourseNotes_Description.Notes = courseTypeNotes.notes;
+
+            courseTypeNotes = HcmCourseTypeNotes::findByCourseTypeNotesType(HRMCourseTable.CourseType, HRMCourseNotesType::TargetGroup);
+            HcmCourseNotes_TargetAudience.Notes = courseTypeNotes.notes;
+
+            courseTypeNotes = HcmCourseTypeNotes::findByCourseTypeNotesType(HRMCourseTable.CourseType, HRMCourseNotesType::Objective);
+            HcmCourseNotes_Objectives.Notes = courseTypeNotes.notes;
+
+            courseTypeNotes = HcmCourseTypeNotes::findByCourseTypeNotesType(HRMCourseTable.CourseType, HRMCourseNotesType::Topics);
+            HcmCourseNotes_Subjects.Notes = courseTypeNotes.notes;
+        }
+    }
+
+    internal void setControlsForIsVirtual()
+    {
+        GeneralGroup_kmKnowledgeCollectorPlanningTableId.visible(!HRMCourseTable.IsVirtual);
+        GeneralGroup_setup.visible(!HRMCourseTable.IsVirtual);
+        GeneralGroup_workflow.visible(!HRMCourseTable.IsVirtual);
+        Location.visible(!HRMCourseTable.IsVirtual);
+        Time.visible(!HRMCourseTable.IsVirtual);
+        Attendee.visible(!HRMCourseTable.IsVirtual);
+        Instructors.visible(!HRMCourseTable.IsVirtual);
+        Hotels.visible(!HRMCourseTable.IsVirtual);
+        TabFinancialDimensions.visible(!HRMCourseTable.IsVirtual);
+        CourseInformation_CourseType.visible(!HRMCourseTable.IsVirtual);
+
+        CourseLink.mandatory(HRMCourseTable.IsVirtual);
+        Time_startDateTime.mandatory(!HRMCourseTable.IsVirtual);
+
+        if (HRMCourseTable.IsVirtual)
+        {
+            HRMCourseTable.minAttendees = 0;
+            HRMCourseTable.maxAttendees = 1000000;
+        }
+    }
+
+    [DataSource]
+    class HRMCourseTable
+    {
+        public void initValue()
+        {
+            super();
+
+            if (hrmCourseTable.CourseType)
+            {
+                hrmCourseTable.initFromCourseType();
+            }
+        }
+
+        int active()
+        {
+            int ret;
+
+            ret = super();
+
+            if (hrmCourseTable.Status == HRMCourseTableStatus::Created || hrmCourseTable.Status == HRMCourseTableStatus::Open)
+            {
+                hrmCourseTable_ds.allowDelete(true);
+                hrmCourseTable_ds.allowEdit(true);
+            }
+            else
+            {
+                hrmCourseTable_ds.allowDelete(false);
+                hrmCourseTable_ds.allowEdit(false);
+            }
+
+            element.setButtons();
+            element.setControlsForIsVirtual();
+
+            return ret;
+        }
+
+        void write()
+        {
+            ttsbegin;
+
+            element.numberSeqFormHandler().formMethodDataSourceWrite();
+            super();
+
+            ttscommit;
+        }
+
+        void delete()
+        {
+            ttsbegin;
+
+            element.numberSeqFormHandler().formMethodDataSourceDelete();
+
+            super();
+
+            ttscommit;
+        }
+
+        void create(boolean append = false)
+        {
+            super(append);
+
+            element.numberSeqFormHandler().formMethodDataSourceCreate();
+
+            HRMCourseLogger::emitCourseCreationTelemetry(HRMCourseTable, formStr(HRMCourseTable));
+        }
+
+        public boolean validateWrite()
+        {
+            boolean ret;
+
+            ret = super();
+
+            if (ret && !element.numberSeqFormHandler().formMethodDataSourceValidateWrite())
+            {
+                ret = false;
+            }
+
+            return ret;
+        }
+
+        public void linkActive()
+        {
+            element.numberSeqFormHandler().formMethodDataSourceLinkActive();
+            super();
+        }
+
+        [DataField]
+        class Configuration 
+        {
+            public void lookup(FormControl _formControl, str _filterStr)
+            {
+                HRMCourseTable::lookupWorkflowTable(_formControl);
+            }
+
+        }
+
+        [DataField]
+        class CourseType 
+        {
+            public void modified()
+            {
+                super();
+
+                if (HRMCourseTable.description == "")
+                {
+                    HRMCourseTable.initFromCourseType();
+                    element.updateCourseNotes();
+                }
+            }
+
+        }
+
+        [DataField]
+        class hrmCourseLocationId 
+        {
+            public void modified()
+            {
+                super();
+                Location_hrmCourseRoomId.text('');
+                hrmCourseTable.hrmCourseRoomId = '';
+            }
+
+        }
+
+        [DataField]
+        class hrmCourseRoomId 
+        {
+            public void lookup(FormControl _formControl, str _filterStr)
+            {
+                Query query = new Query();
+                QueryBuildDataSource qbds;
+                QueryBuildRange qbr;
+                SysTableLookup sysTableLookup = sysTableLookup::newParameters(tableNum(HRMCourseRoom), _formControl);
+                
+                // Add fields
+                sysTableLookup.addLookupfield(fieldNum(HRMCourseRoom, hrmCourseRoomId));
+                sysTableLookup.addLookupfield(fieldNum(HRMCourseRoom, description));
+
+                // Filter rooms by selected course location
+                qbds = query.addDataSource(tableNum(HRMCourseRoom));
+                qbr = qbds.addRange(fieldNum(HRMCourseRoom, hrmCourseLocationId));
+                qbr.value(HRMCourseTable.hrmCourseLocationId);
+
+                // Perform lookup
+                sysTableLookup.parmQuery(query);
+                sysTableLookup.performFormLookup();
+            }
+
+            public void modified()
+            {
+                super();
+                hrmCourseTable.initFromCourseRoom();
+            }
+
+        }
+
+        [DataField]
+        class IsVirtual 
+        {
+            public void modified()
+            {
+                super();
+
+                if (HRMCourseTable.IsVirtual)
+                {
+                    HRMCourseTable.status = HrmCourseTableStatus::Open;
+                    HRMCourseTable.webEnable = NoYes::Yes;
+                }
+
+                element.setControlsForIsVirtual();
+            }
+
+        }
+
+        [DataField]
+        class kmKnowledgeCollectorPlanningTableId 
+        {
+            public void lookup(FormControl _formControl, str _filterStr)
+            {
+                HRMCourseTable::knowledgeCollectorPlanningTableIdLookup(_formControl, hrmCourseTable.HrmCourseId, hrmCourseTable.KmKnowledgeCollectorPlanningTableId);
+            }
+
+        }
+
+    }
+
+    [DataSource]
+    class HcmCourseNotes_Description
+    {
+        public void init()
+        {
+            super();
+
+            this.queryBuildDataSource().addRange(fieldNum(HcmCourseNotes, NotesType)).value(queryValue(HRMCourseNotesType::Notes));
+        }
+
+    }
+
+    [DataSource]
+    class HcmCourseNotes_TargetAudience
+    {
+        public void init()
+        {
+            super();
+
+            this.queryBuildDataSource().addRange(fieldNum(HcmCourseNotes, NotesType)).value(queryValue(HRMCourseNotesType::TargetGroup));
+        }
+
+    }
+
+    [DataSource]
+    class HcmCourseNotes_Objectives
+    {
+        public void init()
+        {
+            super();
+
+            this.queryBuildDataSource().addRange(fieldNum(HcmCourseNotes, NotesType)).value(queryValue(HRMCourseNotesType::Objective));
+        }
+
+    }
+
+    [DataSource]
+    class HcmCourseNotes_Subjects
+    {
+        public void init()
+        {
+            super();
+
+            this.queryBuildDataSource().addRange(fieldNum(HcmCourseNotes, NotesType)).value(queryValue(HRMCourseNotesType::Topics));
+        }
+
+    }
+
+    [DataSource]
+    class HRMCourseTableHotel
+    {
+        [DataField]
+        class hrmCourseHotelId 
+        {
+            public void lookup(FormControl _formControl, str _filterStr)
+            {
+                HRMCourseTableHotel::hrmCourseHotelIdLookup(_formControl, HRMCourseTable.hrmCourseLocationId);
+            }
+
+            public void modified()
+            {
+                super();
+
+                hrmCourseTableHotel.initFromCourseHotel(HRMCourseTable.HrmCourseLocationId);
+            }
+
+            public void jumpRef()
+            {
+                if (!HRMCourseTable.hrmCourseLocationId)
+                {
+                    warning("@Talent:CourseLocationNotSelected");
+
+                    return;
+                }
+
+                // Viewing details on course hotel
+                if (HRMCourseTableHotel.hrmCourseHotelId)
+                {
+                    super();
+                }
+                else
+                {   
+                    // Viewing details without a hotel reference, so the course location is passed into the form so that the hotels form is properly associated with the course location
+                    MenuFunction menuFunction = new MenuFunction(menuitemDisplayStr(HRMCourseHotel), MenuItemType::Display);
+                    Args  args = new Args(menuFunction.object());
+                    args.caller(element);
+
+                    HRMCourseLocation courseLocation = HRMCourseLocation::find(HRMCourseTable.hrmCourseLocationId);
+                    args.record(courseLocation);
+                    menuFunction.run(args);
+                }
+            }
+
+        }
+
+    }
+
+}
