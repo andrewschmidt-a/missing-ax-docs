@@ -8,7 +8,7 @@ Primatives
 
 To use Lumache, first install it using pip:
 
-.. code-block:: Xpp
+.. code-block:: X++
 
    [Form]
    public class HRMCourseTable extends FormRun
