@@ -19,3 +19,4 @@ Contents
    types
    tables
    globalfunctions
+   cookbook
