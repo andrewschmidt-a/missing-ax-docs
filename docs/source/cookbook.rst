@@ -90,7 +90,7 @@ In order to populate this temp table all you need to do is add the following cod
         public void init()
         {
             super();
-            MssLearningTmpSummary.populateTable(true);
+            ExampleSummaryTmpTable.populateTable(true);
         }
 
     }
