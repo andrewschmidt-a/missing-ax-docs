@@ -6,7 +6,7 @@ Global functions
 .. _conversionFunctions:
 
 Conversion runtime functions
---------------------
+----------------------------
 
 .. seealso::
    For more information about conversion runtime functions see the `Official AX docs <https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/dev-itpro/dev-ref/xpp-conversion-run-time-functions>`_
