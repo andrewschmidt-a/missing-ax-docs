@@ -1,9 +1,9 @@
 X++ Cookbook
 ============
 
-Creating aggregate table views with tmp tables
+Creating aggregate table views with temp tables
 ----------------------------------------------
-The following example is the x++ code requiured to populate a tmp table with a view of workers by BirthYear with counts of various email domains 
+The following example is the x++ code required to populate a temp table with a view of workers by BirthYear with counts of various email domains 
 
 .. code-block:: X++
 
