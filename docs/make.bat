@@ -12,8 +12,6 @@ set BUILDDIR=build
 
 if "%1" == "" goto help
 
-python ../pygments/setup.py install
-
 %SPHINXBUILD% >NUL 2>NUL
 if errorlevel 9009 (
 	echo.
